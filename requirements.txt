@@ -20,8 +20,11 @@ django-passkeys
 fido2
 setuptools
 Pillow
+# 👇 图床全家桶
 qiniu
 upyun
 cos-python-sdk-v5
-# 👇 刚才报错就是因为缺了这个！
+boto3
+# 👇 平台全家桶 (刚才报错是因为缺了 python-gitlab)
 PyGithub
+python-gitlab
