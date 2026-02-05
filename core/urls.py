@@ -5,6 +5,22 @@ from django.views.static import serve
 import hexoweb.pub as pub
 from django.views.generic import TemplateView
 
+# 在 core/urls.py 的最上方添加
+from django.contrib.auth import models as auth_models
+from django.db.models.fields import AutoField
+
+# 修复 Django 5.2 在读取 Session ID 时的 int('None') 错误
+def safe_to_python(value):
+    if value is None or value == 'None':
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+# 替换 Django 原生的校验逻辑
+AutoField.to_python = staticmethod(safe_to_python)
+
 urlpatterns = [
     # path('admin/', admin.site.urls),
     # re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT},
