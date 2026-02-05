@@ -127,3 +127,12 @@ def get_fido_server_id(request=None):
 FIDO_SERVER_ID = get_fido_server_id
 FIDO_SERVER_NAME = "Qexo"
 KEY_ATTACHMENT = None
+
+# 强制指定自增字段类型，减少 Django 5.x 的验证冲突
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# 忽略系统检查警告
+SILENCED_SYSTEM_CHECKS = ["fields.W342"]
+
+# 关键：确保 SESSION 序列化使用 JSON（Qexo默认通常是这个，确认一下）
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
