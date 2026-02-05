@@ -1,12 +1,19 @@
 {
-    "rewrites": [
+    "builds": [
         {
-            "source": "/static/(.*)",
-            "destination": "/static/$1"
+            "src": "wsgi.py",
+            "use": "@vercel/python",
+            "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
+        }
+    ],
+    "routes": [
+        {
+            "src": "/static/(.*)",
+            "dest": "/static/$1"
         },
         {
-            "source": "/(.*)",
-            "destination": "/wsgi.py"
+            "src": "/(.*)",
+            "dest": "/wsgi.py"
         }
     ]
 }
