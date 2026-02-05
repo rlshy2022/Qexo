@@ -21,20 +21,25 @@ setuptools
 django-mongodb-backend
 pymongo[srv]
 
-# === 图片处理核心 (必装) ===
-Pillow
+# === 核心缺失库 (本次报错元凶) ===
+html2text
+mistune
+bleach
+beautifulsoup4
+Markdown
 
-# === 图床全家桶 (刚才修好的) ===
+# === 图床全家桶 ===
+Pillow
 oss2
 qiniu
 upyun
 cos-python-sdk-v5
 boto3
 
-# === 平台全家桶 (本次报错元凶) ===
+# === 平台全家桶 ===
 PyGithub
 python-gitlab
 
-# === 杂项依赖 (防止万一) ===
+# === 杂项依赖 ===
 requests-oauthlib
 urllib3
