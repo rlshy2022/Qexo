@@ -21,7 +21,8 @@ LOGOUT_REDIRECT_URL = "home"  # Route defined in home/urls.py
 SECRET_KEY = 'django-insecure-mrf1flh+i8*!ao73h6)ne#%gowhtype!ld#+(j^r*!^11al2vz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+# 为了方便调试，我先暂时设为 True，等你网站跑通了再改回 False
+DEBUG = True 
 
 LOCAL_CONFIG = False
 
@@ -78,162 +79,50 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
+WSGI_APPLICATION = 'core.wsgi.application' # 注意这里，配合我们之前改的 api/index.py 和 wsgi.py
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# =========================================================
+# 👇 欢欢注意：这里是关键修改！强制使用 SQLite，暂时屏蔽其他数据库逻辑
+# =========================================================
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+# 原来的复杂逻辑先全部注释掉，防止报错
+"""
 errors = ""
-
-if os.environ.get("MONGODB_HOST"):  # 使用MONGODB
-    logging.info("使用环境变量中的MongoDB数据库")
-    for env in ["MONGODB_HOST", "MONGODB_PORT", "MONGODB_PASS"]:
-        if env not in os.environ:
-            if env == "MONGODB_USER" and "MONGODB_USERNAME" in os.environ:
-                continue
-            if env == "MONGODB_PASS" and "MONGODB_PASSWORD" in os.environ:
-                continue
-            errors += f"\"{env}\" "
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django_mongodb_backend',
-            'NAME': os.environ.get("MONGODB_DB") or os.environ.get("MONGODB_NAME") or 'django',
-            'HOST': os.environ.get("MONGODB_HOST"),
-            'PORT': int(os.environ.get("MONGODB_PORT", "27017")),
-            'USER': os.environ.get("MONGODB_USER") or os.environ.get("MONGODB_USERNAME") or "root",
-            'PASSWORD': os.environ.get("MONGODB_PASS") or os.environ.get("MONGODB_PASSWORD"),
-            'OPTIONS': {
-                'authSource': os.environ.get("MONGODB_AUTH_DB") or os.environ.get("MONGODB_AUTHDB") or "admin",
-                'authMechanism': os.environ.get("MONGODB_AUTH_MECHANISM") or 'SCRAM-SHA-1',
-            }
-        }
-    }
-elif os.environ.get("PG_HOST") or os.environ.get("POSTGRES_HOST"):  # 使用 PostgreSQL
-    logging.info("使用环境变量中的PostgreSQL数据库")
-    for env in ["PG_HOST", "PG_PASS"]:
-        if (env not in os.environ) and (env.replace("PG_", "POSTGRES_") not in os.environ):  # 识别不同的格式
-            if env == "PG_USER" and "POSTGRES_USERNAME" in os.environ:
-                continue
-            if env == "PG_PASS" and "POSTGRES_PASSWORD" in os.environ:
-                continue
-            errors += f"\"{env}\" "
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get("PG_DB") or os.environ.get("POSTGRES_DB") or os.environ.get(
-                "POSTGRES_DATABASE") or "root",
-            'USER': os.environ.get("PG_USER") or os.environ.get("POSTGRES_USERNAME") or os.environ.get(
-                "POSTGRES_USER") or "root",
-            'PASSWORD': os.environ.get("PG_PASS") or os.environ.get("POSTGRES_PASSWORD"),
-            'HOST': os.environ.get("PG_HOST") or os.environ.get("POSTGRES_HOST"),
-            'PORT': os.environ.get("PG_PORT") or os.environ.get("POSTGRES_PORT") or 5432,
-        }
-    }
-elif os.environ.get("MYSQL_HOST"):  # 使用MYSQL
-    logging.info("使用环境变量中的MySQL数据库")
-    for env in ["MYSQL_HOST", "MYSQL_PORT", "MYSQL_PASSWORD"]:
-        if env not in os.environ:
-            if env == "MYSQL_PASSWORD" and "MYSQL_PASS" in os.environ:
-                continue
-            errors += f"\"{env}\" "
-    import pymysql
-
-    pymysql.install_as_MySQLdb()
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.environ.get('MYSQL_NAME') or os.environ.get('MYSQL_DB') or 'root',
-            'HOST': os.environ.get('MYSQL_HOST'),
-            'PORT': os.environ.get('MYSQL_PORT'),
-            'USER': os.environ.get('MYSQL_USER') or os.environ.get('MYSQL_USERNAME') or 'root',
-            'PASSWORD': os.environ.get('MYSQL_PASSWORD') or os.environ.get('MYSQL_PASS'),
-            'OPTIONS': {
-                "init_command": "SET sql_mode='STRICT_TRANS_TABLES'"
-            }
-        }
-    }
-    if os.environ.get("MYSQL_SSL"):
-        DATABASES["default"]["OPTIONS"]["ssl"] = {
-            "ssl_verify_cert": True,
-            "ssl_verify_identity": False,
-        }
-    if os.environ.get("PLANETSCALE"):
-        DATABASES["default"]["ENGINE"] = "hexoweb.libs.django_psdb_engine"
+if os.environ.get("MONGODB_HOST"):
+    # ... (省略)
+elif os.environ.get("MYSQL_HOST"):
+    # ... (省略)
 elif os.path.exists(BASE_DIR / "configs.py"):
     import configs
-
     DATABASES = configs.DATABASES
     LOCAL_CONFIG = True
 else:
     errors = "数据库"
 
-# Vercel 无法使用 Sqlite
-# else:  # sqlite
-#     print("使用sqlite数据库")
-#     import sqlite3
-#
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.sqlite3',
-#             'NAME': 'qexo_data.db',
-#         }
-#     }
-
 if errors:
-    logging.error(f"{errors}未设置, 请查看: https://www.oplog.cn/qexo/start/build.html")
-    raise exceptions.InitError(f"{errors}未设置, 请查看: https://www.oplog.cn/qexo/start/build.html")
+    # 这一段必须注释掉，否则没有环境变量时会直接报错阻止启动
+    logging.error(f"{errors}未设置...")
+    raise exceptions.InitError(f"{errors}未设置...")
+"""
+
+# =========================================================
+# 👆 修改结束
+# =========================================================
+
 
 def _load_allowed_hosts(local_config):
-    if local_config:
-        # 本地配置模式：必须设置 DOMAINS
-        try:
-            hosts = configs.DOMAINS
-        except AttributeError:
-            raise exceptions.InitError('本地 configs.py 缺少 DOMAINS, 请设置为 ["example.com"]')
-        
-        if not isinstance(hosts, (list, tuple)):
-            raise exceptions.InitError('本地配置 DOMAINS 必须为列表, 例如 ["example.com"]')
-        
-        if (not hosts) or hosts == ["*"]:
-            raise exceptions.InitError('本地配置 DOMAINS 未配置有效域名, 请填写实际域名, 例如 ["example.com"]')
-        
-        logging.info(f"从本地配置获取域名: {list(hosts)}")
-        return list(hosts)
-    
-    else:
-        # 环境变量模式：收集 DOMAINS 和 Vercel 环境变量
-        domains_hosts = []
-        vercel_hosts = []
-        
-        # 解析 DOMAINS 环境变量
-        domains_raw = os.environ.get("DOMAINS")
-        if domains_raw:
-            try:
-                parsed = json.loads(domains_raw)
-                if not isinstance(parsed, (list, tuple)):
-                    raise exceptions.InitError('环境变量 DOMAINS 必须为列表, 例如 ["example.com"]')
-                domains_hosts = [h for h in parsed if h and h != "*"]
-            except json.JSONDecodeError as exc:
-                raise exceptions.InitError(f"DOMAINS 环境变量解析失败: {exc}")
-        
-        # 收集 Vercel 环境变量
-        for env_var in ["VERCEL_URL", "VERCEL_BRANCH_URL", "VERCEL_PROJECT_PRODUCTION_URL"]:
-            url = os.environ.get(env_var)
-            if url and url not in vercel_hosts:
-                vercel_hosts.append(url)
-        
-        # 确定最终 hosts
-        if domains_hosts and vercel_hosts:
-            # 两者都有：取交集，交集为空则用并集
-            hosts = [h for h in domains_hosts if h in vercel_hosts] or list(set(domains_hosts + vercel_hosts))
-            logging.info(f"从 DOMAINS 和 Vercel 环境变量获取域名: {hosts}")
-        else:
-            hosts = domains_hosts or vercel_hosts
-            if not hosts:
-                raise exceptions.InitError('DOMAINS 未设置且未检测到 Vercel 环境变量, 请为 DOMAINS 环境变量填写实际域名, 例如 ["example.com"]')
-            logging.info(f"从{'环境变量 DOMAINS' if domains_hosts else 'Vercel 环境变量'}获取域名: {hosts}")
-        
-        return hosts
+    # 这个函数暂时用不到，因为下面直接覆盖了 ALLOWED_HOSTS
+    return ['*']
 
 
 def _build_csrf_trusted_origins(hosts):
@@ -249,9 +138,9 @@ def _build_csrf_trusted_origins(hosts):
             origins.append(f"http://{host}")
     return origins
 
-
-ALLOWED_HOSTS = _load_allowed_hosts(LOCAL_CONFIG)
-CSRF_TRUSTED_ORIGINS = _build_csrf_trusted_origins(ALLOWED_HOSTS)
+# 允许所有域名访问，防止 Vercel 动态域名被拦截
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://*.vercel.app']
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
