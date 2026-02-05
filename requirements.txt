@@ -11,20 +11,30 @@ gunicorn
 psycopg2-binary
 requests
 whitenoise
-oss2
-django-mongodb-backend
-pymongo[srv]
 ua-parser
 user-agents
 django-passkeys
 fido2
 setuptools
+
+# === 数据库驱动 ===
+django-mongodb-backend
+pymongo[srv]
+
+# === 图片处理核心 (必装) ===
 Pillow
-# 👇 图床全家桶
+
+# === 图床全家桶 (刚才修好的) ===
+oss2
 qiniu
 upyun
 cos-python-sdk-v5
 boto3
-# 👇 平台全家桶 (刚才报错是因为缺了 python-gitlab)
+
+# === 平台全家桶 (本次报错元凶) ===
 PyGithub
 python-gitlab
+
+# === 杂项依赖 (防止万一) ===
+requests-oauthlib
+urllib3
