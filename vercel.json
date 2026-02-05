@@ -13,7 +13,7 @@
         },
         {
             "src": "/(.*)",
-            "dest": "qexo/wsgi.py"
+            "dest": "/qexo/wsgi.py"
         }
     ]
 }
