@@ -1,6 +1,12 @@
 from pathlib import Path
 import os
+import sys
 import urllib3
+# 👇 【关键补丁】解决 Django 5.0 移除了 ugettext 导致报错的问题
+import django.utils.translation
+if not hasattr(django.utils.translation, "ugettext"):
+    django.utils.translation.ugettext = django.utils.translation.gettext
+    django.utils.translation.ugettext_lazy = django.utils.translation.gettext_lazy
 
 urllib3.disable_warnings()
 
@@ -63,7 +69,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 # =========================================================
-# 👇 数据库配置（只保留路径定义，不执行命令）
+# 👇 数据库配置（兼容 Vercel）
 # =========================================================
 if os.environ.get("MONGODB_HOST"):
     DATABASES = {
@@ -78,7 +84,7 @@ if os.environ.get("MONGODB_HOST"):
         }
     }
 else:
-    # ⚠️ Vercel 只读环境专用：使用 /tmp 目录
+    # Vercel 只读环境专用
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
