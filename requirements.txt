@@ -1,6 +1,6 @@
-# === 核心 Web 框架 (严格锁定版本) ===
+# === 核心 Web 框架 ===
 Django==4.2.10
-django-mongodb-backend==4.2.0
+django-mongodb-backend
 pymongo[srv]==4.6.1
 
 # === 核心功能组件 ===
