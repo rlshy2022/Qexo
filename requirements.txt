@@ -11,7 +11,6 @@ gunicorn
 psycopg2-binary
 requests
 whitenoise
-# 👇 阿里云 OSS 必须要有这个
 oss2
 django-mongodb-backend
 pymongo[srv]
@@ -20,8 +19,9 @@ user-agents
 django-passkeys
 fido2
 setuptools
-# 👇 必须补全下面这些，否则启动时会报错
 Pillow
 qiniu
 upyun
 cos-python-sdk-v5
+# 👇 刚才报错就是因为缺了这个！
+PyGithub
