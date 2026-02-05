@@ -1,4 +1,9 @@
-Django
+# === 核心 Web 框架 (严格锁定版本) ===
+Django==4.2.10
+django-mongodb-backend==4.2.0
+pymongo[srv]==4.6.1
+
+# === 核心功能组件 ===
 dj-database-url
 dj-rest-auth
 django-allauth
@@ -13,22 +18,20 @@ requests
 whitenoise
 ua-parser
 user-agents
+
+# === 认证与安全 ===
 django-passkeys
 fido2
 setuptools
 
-# === 数据库驱动 ===
-django-mongodb-backend
-pymongo[srv]
-
-# === 核心缺失库 (本次报错元凶) ===
+# === 文本处理 (修复渲染报错) ===
 html2text
 mistune
 bleach
 beautifulsoup4
 Markdown
 
-# === 图床全家桶 ===
+# === 图床支持 ===
 Pillow
 oss2
 qiniu
@@ -36,7 +39,7 @@ upyun
 cos-python-sdk-v5
 boto3
 
-# === 平台全家桶 ===
+# === 平台集成 ===
 PyGithub
 python-gitlab
 
