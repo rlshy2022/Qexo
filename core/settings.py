@@ -250,7 +250,7 @@ def _build_csrf_trusted_origins(hosts):
     return origins
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = _load_allowed_hosts(LOCAL_CONFIG)
 CSRF_TRUSTED_ORIGINS = _build_csrf_trusted_origins(ALLOWED_HOSTS)
 
 # Password validation
