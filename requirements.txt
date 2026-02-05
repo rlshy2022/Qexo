@@ -16,3 +16,4 @@ django-mongodb-backend
 pymongo[srv]
 ua-parser
 user-agents
+setuptools
