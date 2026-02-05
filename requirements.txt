@@ -16,4 +16,7 @@ django-mongodb-backend
 pymongo[srv]
 ua-parser
 user-agents
+# 👇 下面是这次补上的关键库！
+django-passkeys
+fido2
 setuptools
